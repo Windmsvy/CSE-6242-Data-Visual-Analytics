@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Test</title>
+        <script type="text/javascript" src="d3/d3.v3.min.js"></script>
+        <style type="text/css">        
+        div.bar {
+            display: inline-block;
+            width: 20px;
+            height: 75px;
+            margin-right: 2px;
+            }
+     </style>
+    </head>
+    <body>
+        <script type="text/javascript">
+    var dataset = []; 
+    for (var i = 0; i < 25; i++) {  
+    var newNumber = i;
+    dataset.push(newNumber);            
+    }
+    d3.select("body").selectAll("div")
+    .data(dataset)
+    .enter()
+    .append("div")
+    .attr("class", "bar")
+    .style("background-color",function(d){
+        if (d>19) { return "purple";}
+        else if (d>14) {return "red";}
+        else if (d>9) {return "blue";}
+        else if (d>4)  {return "yellow";}
+        else { return "orange";}
+    });
+    d3.select("body")
+    .append("p")
+    .text("Xu Zhang");  
+        </script>
+    </body>
+</html>

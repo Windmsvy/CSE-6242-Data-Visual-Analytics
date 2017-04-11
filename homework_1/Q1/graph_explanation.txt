@@ -1,0 +1,15 @@
+Inertia 0.3
+Repulsion strength 2500
+Attraction strength 30
+Maximum displacement 10
+Auto stabilize function yes
+Autostab Strength 50.0
+Autostab sensibility 0.1
+Gravity 15.0
+Attraction on Distrib yes
+Adjust by Sizes yes
+Speed 0.5
+
+Choose show Labels
+Color chooses from red to light link along with the decreasing of importance.
+Make all elements distributed along the circle. The size of circle is large while this user react with more users.

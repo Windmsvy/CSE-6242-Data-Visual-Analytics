@@ -1,0 +1,105 @@
+.headers on
+/*Query for question a*/
+
+create table movies(
+movie_id int PRIMARY KEY,
+name text not null,
+genre text
+);
+create table ratings(
+user_id int not null,
+movie_id int not null,
+rating real,
+timestamp int
+);
+.separator '%'
+.import /Users/XuZhang/Desktop/Q2/movies.txt movies
+.import /Users/XuZhang/Desktop/Q2/ratings.txt ratings
+.separator ','
+select null;
+
+/*Query for question b*/
+
+create index movies_primary_index on movies (movie_id);
+create index movies_secondary_index on ratings (movie_id);
+
+select null;
+
+/*Query for question c*/
+
+select count(sub.avg_rating) as movie_count from(
+select avg(rating) as avg_rating from ratings
+group by movie_id
+having avg(rating)>=3.5 and count(user_id)>=500) sub;
+select null;
+
+
+/*Query for question d*/
+
+select DISTINCT A.movie_id,name,count(*)
+from ratings as R,movies as A
+where R.movie_id in(
+select movie_id from ratings
+group by movie_id
+having count(*)>2500) and  R.movie_id=A.movie_id
+group by R.movie_id
+order by count(*) DESC,name;
+select null;
+
+/*Query for question e*/
+
+select distinct A.movie_id,name,avg(rating) 
+from movies as A, ratings as R
+where A.movie_id=R.movie_id   
+group by R.movie_id
+order by avg(rating) DESC,name
+limit 10;
+select null;
+
+/*Query for question f*/
+select distinct name,avg(rating),count(rating),genre
+from movies as A, ratings as R
+where R.movie_id=A.movie_id
+group by R.movie_id
+having count(rating)>=1000
+order by avg(rating) DESC,name,genre
+limit 8;
+select null;
+
+/*Query for question g*/
+Create view common_interests AS
+SELECT Y.user_id as user_id1,Z.user_id as user_id2, name as movie_name
+from movies as X join ratings as Y using (movie_id) join ratings as Z on (Y.movie_id=Z.movie_id and user_id1<user_id2)
+where X.movie_id in(
+select movie_id
+from ratings
+group by movie_id
+having count(*)==10);
+
+
+/*Query for question h*/
+select count(*) from common_interests;
+select null;
+
+/*Query for question i*/
+Create VIRTUAL TABLE movie_overview USING fts3(id integer,name text,year integer,overview text,popularity decimal);
+.import /Users/XuZhang/Desktop/Q2/movie-overview.txt movie_overview
+
+select count(*) from movie_overview where overview MATCH "life OR death";
+select null;
+
+select id from movie_overview where overview MATCH "life NEAR/6 about";
+select null;
+
+
+
+
+
+
+
+
+
+
+
+
+
