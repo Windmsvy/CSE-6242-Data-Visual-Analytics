@@ -1,0 +1,2 @@
+Splits the content, map a key pair of node and weight (if it is first number, weight is positive and negative for second data) .
+Then reduce pairs by sum up the value of each key to get the final output. 

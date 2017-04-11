@@ -1,0 +1,13 @@
+bigrams = LOAD 's3://cse6242-2016fall-bigrams-big/* '  USING PigStorage('\t') AS (bigram:chararray, year:int, count:double, books:double);
+
+filtered = FILTER bigrams BY count > 49;
+
+grouped = GROUP filtered BY bigram;
+
+apb = FOREACH grouped GENERATE group, SUM(filtered.count)/SUM(filtered.books) AS acpb; 
+
+sorted = ORDER apb BY acpb DESC, group ASC;
+
+first_ten_sorted = LIMIT sorted 10;
+
+STORE first_ten_sorted INTO 's3://cse6242-xzhang668/output-big_final' using PigStorage('\t');
