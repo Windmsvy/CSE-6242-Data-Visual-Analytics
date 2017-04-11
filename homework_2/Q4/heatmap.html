@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Homework #2 Q4 Xu Zhang</title>
+<style>
+body {
+  font: 12px sans-serif;
+}
+.tile {
+  shape-rendering: crispEdges;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+</style>
+<body>
+<script type="text/javascript" src="../lib/d3.v3.min.js"></script>
+<script src="../lib/d3.legend.js"></script>
+<script>
+
+var margin = {top: 20, right: 90, bottom: 30, left: 50},
+    width = 800 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+var x_Step = 1;
+var y_Step = 50;
+
+var formatDate = d3.time.format("%H h");
+
+var x=d3.scale.linear().range([0, width]);
+var y=d3.scale.linear().range([height, 0]);
+var z=d3.scale.linear().range(["White", "Red"]);
+
+
+var svg = d3.select("body")
+	.append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  	.append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+var svg_2 = d3.select("body")
+	.append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+d3.json("hourly_heatmap.json",function(data) {
+      data1=[];
+      p=0;
+      while (p<(data.length*24)){
+      	for (var j=0;j<data.length;j++){
+      		for (var tem=0;tem<24;tem++){
+      			data1[p]={"date":tem.toString(),
+      					  "bucket":data[j].key,
+      					  "count":data[j].values[tem]};
+          			p++;
+        	}
+      }}
+  console.log(data1);
+  x.domain([0, d3.max(data1, function(d) { return Number(d.date); })]);
+  y.domain(d3.extent(data1, function(d) { return d.bucket; }));
+  z.domain([0, d3.max(data1, function(d) { return d.count; })]); 
+  x.domain([x.domain()[0], x.domain()[1] + x_Step]);
+  y.domain([y.domain()[0], y.domain()[1] + y_Step]);
+
+  svg.selectAll(".tile")
+      .data(data1)
+      .enter()
+      .append("rect")
+      .attr("class", "tile")
+      .attr("x", function(d) { return x(d.date); })
+      .attr("y", function(d) { return y(d.bucket+y_Step); })
+      .attr("width", x(x_Step) - x(0))
+      .attr("height",  y(0) - y(y_Step))
+      .style("fill", function(d) { return z(d.count); });
+
+  var legend = svg.selectAll(".legend")
+      .data(z.ticks(8).slice(0).reverse())
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d,i) {return "translate("+(width+25)+","+(25+i*15)+")";});
+  legend.append("rect")
+      .attr("width", 30)
+      .attr("height", 30)
+      .style("fill", z);
+  legend.append("text")
+      .attr("x", 36)
+      .attr("y", 10)
+      .attr("dy", ".30em")
+      .text(String);
+  svg.append("text")
+      .attr("class", "label")
+      .attr("x", width + 20)
+      .attr("y", 10)
+      .attr("dy", ".30em")
+      .text("Glucose");
+
+
+   svg.append("g")
+          .attr("class", "y axis")
+          .call(d3.svg.axis()
+          .scale(y)
+          .orient("left"))
+          .append("text")
+          .attr("y", 6)
+          .attr("dy", "10")
+          .attr("transform", "rotate(-90)")
+          .style("text-anchor", "end")
+          .text("Record")
+    svg.append("g")
+          .attr("class", "x axis")
+          .call(d3.svg.axis()
+          .scale(x)  
+          .orient("bottom"))
+      	  .attr("transform", "translate(0," + height + ")")
+          .append("text")
+          .attr("x", width)
+          .attr("y", -4)
+          .style("text-anchor", "end")
+          .text("Time/h");
+
+       svg.append("text")
+      .attr("x", width / 2 )
+      .attr("y", -10)
+      .style("text-anchor", "middle")
+      .text("Figure 1: Glucose readings against the time of the day");
+
+});
+
+   // step 2 Figure 2
+ var formatDate = d3.time.format("%a");
+  var x2 = d3.time.scale().range([0, width]);
+  var y2 = d3.scale.linear().range([height, 0]);
+  var z2 = d3.scale.linear().range(["white",  "Red"]);  
+  d3.json("day_heatmap.json", function(data) {   
+     data2=[]; i=0;
+      while (i<(data.length*7)){
+      for (var j=0;j<data.length;j++){
+        for (var  k=0;k<7;k++){
+          data2[i]={"date":k.toString(),
+          			"bucket":data[j].key,
+          			"count":data[j].values[k]};
+          			i++;
+        }
+      } 
+      }  
+      console.log(data2);
+      x2.domain(d3.extent(data2, function(d) {return d.date;})); 
+      y2.domain(d3.extent(data2, function(d) {return d.bucket;}));
+      z2.domain([0, d3.max(data2, function(d) {return d.count;})]); 
+   
+      x2.domain([+x2.domain()[0], +x2.domain()[1] + x_Step]);
+      y2.domain([y2.domain()[0], y2.domain()[1] + y_Step]);
+    
+      svg_2.selectAll(".tile")
+        .data(data2)
+        .enter()
+        .append("rect")
+        .attr("class", "tile")
+        .attr("x", function(d) { return x2(d.date); })
+        .attr("y", function(d) { return y2(d.bucket + y_Step); })
+        .attr("width", x2(x_Step)-x2(0))
+        .attr("height",  y2(0)-y2(y_Step))
+        .style("fill", function(d) { return z2(d.count); });
+
+    var legend = svg_2.selectAll(".legend")
+        .data(z2.ticks(8).slice(0).reverse())
+        .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", function(d,i) {return "translate("+(width+25)+","+(25+i*15) + ")";});
+      legend.append("rect")
+        .attr("width", 20)
+        .attr("height", 20)
+        .style("fill", z2);
+      legend.append("text")
+        .attr("x", 26)
+        .attr("y", 10)
+        .attr("dy", ".35em")
+        .text(String);
+
+      svg_2.append("text")
+        .attr("class", "label")
+        .attr("x", width+20)
+        .attr("y", 10)
+        .attr("dy", ".30em")
+        .text("Glucose");
+
+    var weekday=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+    var trans = function(d){return weekday[d%7];}
+      
+   svg_2.append("g")
+          .attr("class", "y axis")
+          .call(d3.svg.axis()
+          .scale(y2)
+          .orient("left"))
+          .append("text")
+          .attr("y", 6)
+          .attr("dy", "10")
+          .attr("transform", "rotate(-90)")
+          .style("text-anchor", "end")
+          .text("Record")
+    svg_2.append("g")
+          .attr("class", "x axis")
+          .call(d3.svg.axis()
+          .scale(x2)  
+          .orient("bottom")
+          .tickFormat(trans))
+      	  .attr("transform", "translate(0," + height + ")")
+          .append("text")
+          .attr("x", width)
+          .attr("y", -10)
+          .style("text-anchor", "end")
+          .text("Day of week");
+
+   svg_2.append("text")
+      .attr("x", width / 2 )
+      .attr("y", -10)
+      .style("text-anchor", "middle")
+      .text("Figure 2: Glucose readings against the day of week");
+
+});
+
+</script>
+</body>

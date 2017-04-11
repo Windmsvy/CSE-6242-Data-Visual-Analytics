@@ -1,0 +1,6 @@
+explaination
+
+1. I choose Excel to build my own table. In my table, I calculate the number of receiving refugees of different countries in those years. From it can we notice the change of aimming countries of refugees and also know which country contributes most in these years.
+Choosing Excel is because that it is the easiest to way to handle those data.
+
+2.In Tableau, I add the population of male and female to represent the change of age. Because the male information is listed in F-total/M-total. Using year as standand, and to present the influence of different origin countries, I colored them in each graph to make it clear.

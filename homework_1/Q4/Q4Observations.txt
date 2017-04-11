@@ -1,0 +1,17 @@
+(i)
+1) key collision method runs much faster than neighborhood.
+2) Numbers of results from neighborhood is more than key collision and furthur steps needed.
+I need do less jobs to improve key collision's results and spend less time, that's why I choose Key collision method.
+
+
+
+(iii)
+Only nominal data:
+status
+Only Ordinal data:
+id
+
+(v)
+
+I will clean the column "Venue".
+After Text facet process, the overall terms of venue decrease to 142 from 243, which simplified overall model.

@@ -1,0 +1,2 @@
+explanation
+I choose scaling the radii linearly according to its weight. Because this method will mostly keep its differences and never make the graph ugly. Once using square root, the largest one seems not so big and decreasing its importance. So I don't think it is a good method approaching.

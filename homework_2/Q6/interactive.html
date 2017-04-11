@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Interactive Visualization for FooBar Company _ Xu Zhang</title>
+<style>
+
+body {
+  font: 10px sans-serif;
+  position: absolute;
+}
+.bar {
+      fill: grey;
+      fill-opacity: 1;
+}
+.bar text.value {
+  fill: white;
+  font:15px sans-serif;
+}
+.toolTip {
+      position: absolute;
+      width: 50;
+      height:45;
+      color: black;
+      font: 20px sans-serif;
+      padding: 5px;
+      text-align: left;
+}
+.axis {
+  shape-rendering: crispEdges;
+}
+
+.axis path {
+  fill: none;
+}
+
+.x.axis line {
+  stroke: black;
+  stroke-opacity: .8;
+}
+
+.y.axis path {
+  stroke: black;
+}
+
+</style>
+<body>
+<script src="../lib/d3.v3.min.js"></script>
+<script>
+var div = d3.select("body").append("div").attr("class", "toolTip");
+
+var m = [30, 30, 30, 80],
+    w = 800 - m[1] - m[3],
+    h = 500 - m[0] - m[2];
+
+var format = d3.format(",.0f");
+
+var x = d3.scale.linear().range([0, w]),
+    y = d3.scale.ordinal().rangeRoundBands([10, h], .1);
+
+var xAxis = d3.svg.axis().scale(x).orient("top").tickSize(5),
+    yAxis = d3.svg.axis().scale(y).orient("left").tickSize(0);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", w + m[1] + m[3])
+    .attr("height", h + m[0] + m[2])
+  .append("g")
+    .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+
+var data = [
+    {product:'Product A',freq:{Q1:716, Q2:1287, Q3:249, Q4:324}}
+    ,{product:'Product B',freq:{Q1:2000, Q2:1876, Q3:3009, Q4:973}}
+    ,{product:'Product C',freq:{Q1:899, Q2:2333, Q3:418, Q4:213}}
+    ,{product:'Product D',freq:{Q1:989, Q2:1543, Q3:1862, Q4: 1111}}
+    ,{product:'Product E',freq:{Q1:4200, Q2:3220, Q3:948, Q4: 629}}
+    ,{product:'Product F',freq:{Q1:1321, Q2:156, Q3:212, Q4: 821}}
+    ,{product:'Product G',freq:{Q1:1977, Q2:247, Q3:1203, Q4: 562}}
+    ,{product:'Product H',freq:{Q1:2498, Q2:2852, Q3:942, Q4: 444}}
+    ];
+
+  x.domain([0, d3.max(data, function(d) { return d.freq.Q1+d.freq.Q2+d.freq.Q3+d.freq.Q4;})]);
+  y.domain(data.map(function(d) { return d.product;}));
+
+  var bar = svg.selectAll("g.bar")
+      .data(data)
+      .enter().append("g")
+      .attr("class", "bar")
+      .attr("transform", function(d) { return "translate(0," + y(d.product) +")"; })
+      .on("mousemove", function(d){
+                d3.select(this)  
+                .style("fill","steelblue") ; 
+                div.style("left",750+"px");
+                div.style("top", 350+"px");
+                div.style("display", "inline-block");
+                div.html(
+                    "Q1"+"&nbsp;"+"$"+d.freq.Q1+"&nbsp;"+(100*(d.freq.Q1/(d.freq.Q1+d.freq.Q2+d.freq.Q3+d.freq.Q4))).toFixed(2)+"%"+"<br>"+
+                    "Q2"+"&nbsp;"+"$"+d.freq.Q2+"&nbsp;"+(100*(d.freq.Q2/(d.freq.Q1+d.freq.Q2+d.freq.Q3+d.freq.Q4))).toFixed(2)+"%"+"<br>"+
+                    "Q3"+"&nbsp;"+"$"+d.freq.Q3+"&nbsp;"+(100*(d.freq.Q3/(d.freq.Q1+d.freq.Q2+d.freq.Q3+d.freq.Q4))).toFixed(2)+"%"+"<br>"+
+                    "Q4"+"&nbsp;"+"$"+d.freq.Q4+"&nbsp;"+(100*(d.freq.Q4/(d.freq.Q1+d.freq.Q2+d.freq.Q3+d.freq.Q4))).toFixed(2)+"%"+"<br>");
+            })
+      .on("mouseout", function(d){
+                d3.select(this)  
+                .style("fill","grey") ; 
+                div.style("display", "inline-block");
+                div.html("");
+            });
+
+  bar.append("rect")
+      .attr("width", function(d) { return x(d.freq.Q1+d.freq.Q2+d.freq.Q3+d.freq.Q4); })
+      .attr("height", 35);
+
+  bar.append("text")
+      .attr("class", "value")
+      .attr("x", function(d) { return x(d.freq.Q1+d.freq.Q2+d.freq.Q3+d.freq.Q4); })
+      .attr("y", 15)
+      .attr("dx", -10)
+      .attr("dy", ".35em")
+      .attr("text-anchor", "end")
+      .text(function(d) { return "$ "+format(d.freq.Q1+d.freq.Q2+d.freq.Q3+d.freq.Q4); });
+
+  svg.append("g")
+      .attr("class", "x axis")
+      .call(xAxis);
+
+  svg.append("g")
+      .attr("class", "y axis")
+      .call(yAxis);
+
+   svg.append("text")
+        .attr("x", (w/2))
+        .attr("y", h+20)
+        .attr("text-anchor", "middle")
+        .style("font-size", "20px")
+        .text("Revenue for FooBar Company, 2015");
+
+
+</script>

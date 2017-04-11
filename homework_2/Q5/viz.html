@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<title>Sankey Graph for Formula One Racing_Xu Zhang</title>
+<style>
+.node rect {
+  cursor: move;
+  fill-opacity: .9;
+  shape-rendering: crispEdges;
+}
+
+.node text {
+  pointer-events: none;
+  text-shadow: 0 1px 0 #fff;
+}
+
+.link {
+  fill: none;
+  stroke: #000;
+  stroke-opacity: 0.15;
+}
+
+.link:hover {
+  stroke-opacity: 0.6;
+}
+
+.d3-tip {
+  line-height: 1;
+  font-weight: bold;
+  padding: 8px;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  border-radius: 3px;
+}
+
+</style>
+<body>
+<div id="tooltip"></div>
+<p id="chart">
+<script src="../lib/d3.v3.min.js"></script>
+<script src="../lib/sankey.js"></script>
+<script src="../lib/d3.tip.v0.6.3.js"></script>
+<script>
+  
+var units = "Points";
+var margin = {top: 10, right: 10, bottom: 10, left: 10},
+    width = 1080 - margin.left - margin.right,
+    height = 600 - margin.top - margin.bottom;
+
+
+var tip = d3.tip()
+          .attr("class", "d3-tip")
+          .html(function(d) {
+            return d.source.name + " --> " + d.target.name + "\n" + format(d.value); })
+          .style("font","10px sans-serif");
+
+var svg = d3.select("#chart").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", 
+          "translate(" + margin.left + "," + margin.top + ")");
+svg.call(tip);
+
+var formatNumber = d3.format(",.d"), 
+    format = function(d) { return formatNumber(d) + " " + units; },
+
+color = d3.scale.category20();
+
+var sankey = d3.sankey()
+    .nodeWidth(30)
+    .nodePadding(10)
+    .size([width, height]);
+
+var path = sankey.link();
+
+d3.csv("races.csv", function(data) {
+    d3.csv("teams.csv", function(data2) {
+    graph = {"nodes" : [], "links" : []};
+
+  data.forEach(function(d){
+      graph.nodes.push({"name":d.driver});
+      graph.nodes.push({"name":d.race});
+      graph.links.push({"source":d.race,
+                        "target":d.driver,
+                        "value":d.points});
+     });
+  data2.forEach(function (d) {
+      graph.nodes.push({ "name": d.driver});
+      graph.nodes.push({ "name": d.team});
+      graph.links.push({ "source": d.driver,
+                         "target": d.team,
+                         "value": d.points});
+     });
+    graph.nodes.sort(function(d1, d2){
+        if(d1.name[0]<d2.name[0]) return -1;
+        if(d1.name[0]>d2.name[0]) return 1;
+        else return 0;}); 
+
+   graph.nodes = d3.keys(d3.nest()
+       .key(function (d) { return d.name; })
+       .map(graph.nodes));
+
+     graph.links.forEach(function (d, i) {
+          graph.links[i].source = graph.nodes.indexOf(graph.links[i].source);
+          graph.links[i].target = graph.nodes.indexOf(graph.links[i].target);
+     });
+
+     graph.nodes.forEach(function (d, i) {
+          graph.nodes[i] = {"name": d };
+     });
+
+sankey.nodes(graph.nodes)
+    .links(graph.links)
+    .layout(15);
+
+var link = svg.append("g")
+          .selectAll(".link")
+          .data(graph.links)
+          .enter()
+          .append("path")
+          .attr("class", "link")
+          .attr("d", path)
+          .style("stroke-width", function(d) { return Math.max(d.dy,1); })
+          .sort(function(a, b) { return b.dy - a.dy; });
+
+link.on("mouseover", tip.show)
+    .on('mouseout', tip.hide);
+
+var node = svg.append("g").selectAll(".node")
+              .data(graph.nodes)
+              .enter().append("g")
+              .attr("class", "node")
+              .attr("transform", function(d) { 
+                  return "translate(" + d.x + "," + d.y + ")"; });
+
+node.append("rect")
+    .attr("height", function(d) { return d.dy; })
+    .attr("width", sankey.nodeWidth())
+    .style("fill", function(d) { 
+      return d.color = color(d.name); })
+    .style("stroke", function(d) { 
+      return d3.rgb(d.color).darker(5);});
+
+
+node.append("text")
+    .attr("x", -6)
+    .attr("y", function(d) { return d.dy / 2; })
+    .attr("dy", ".30em")
+    .attr("text-anchor", "end")
+    .attr("transform", null)
+    .text(function(d) { return d.name; })
+    .filter(function(d) { return d.x < width / 2; })
+    .attr("x", 6 + sankey.nodeWidth())
+    .attr("text-anchor", "start");
+});
+});
+</script>
+
+</body>
+</html>

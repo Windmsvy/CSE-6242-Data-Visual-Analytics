@@ -1,0 +1,6 @@
+explaination
+1. Basing on the final graph, I think using petal will perform better at seperating, because in figure 1, virginica and versicolor are mixed together and seldom occurs in figure 2.
+
+2.The advantages for using log are:
+1) Many distribution is log distribution, so we can notice the inner connection.
+2) Decease the blank area and the number difference in the axile will be much smaller. Save space to display the graph.

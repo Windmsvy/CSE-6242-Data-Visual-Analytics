@@ -1,0 +1,14 @@
+1) Average node degree : 2.034
+
+Node degree is the number of edges incident to the other nodes, so average node degree means that, in average,  there is 2.034 edges incident to one node.
+
+
+2) Diameter of the graph : 4
+
+Diameter of the graph means the largest number of vertices which must be traversed in order to travel from one vertex to another, when paths which backtrack, detour, or loop are excluded from consideration.
+
+
+3) Average path length : 3.655
+
+Path length is the average graph-distance divide the number of node-pairs.
+
