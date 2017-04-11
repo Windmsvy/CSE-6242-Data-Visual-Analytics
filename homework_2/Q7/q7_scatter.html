@@ -1,0 +1,112 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<meta charset="UTF-8">
+<title>Scatter Plot for Median Salary vs Avg_Sat score in Georgia _ Xu Zhang</title>
+<style>
+body{
+  font:10px sans-serif;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.d3-tip {
+    line-height: 1;
+    font-weight: bold;
+    padding: 5px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border-radius: 2px;
+}
+circle {
+  fill: green;
+  stroke: #000;
+  fill-opacity:0.7;
+}
+</style>
+<body>
+<script src="../lib/d3.v3.min.js"></script>
+<script type="text/javascript" src="../lib/d3.tip.v0.6.3.js"></script>
+<script>
+var margin = {top: 40, right: 20, bottom: 30, left: 40},
+    width = 800 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+var SAT_AVG_ALL=d3.scale.linear().range([0,width]);
+var md_earn_wne_p10=d3.scale.linear().range([height,0]);
+var body = d3.select("body");
+var svg= d3.select("body")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+         
+
+d3.csv("Most+Recent+Cohorts+(Scorecard+Elements).csv",function(data){
+  dataset = [];
+  data.forEach(function(d){
+    if(d.STABBR=="GA" && d.SAT_AVG_ALL!='NULL' && d.md_earn_wne_p10!='NULL'){
+        dataset.push({"Name":d.INSTNM,"Score":parseInt(d.SAT_AVG_ALL),"Earn":parseInt(d.md_earn_wne_p10)});
+    }
+  });
+console.log(dataset); 
+var tip = d3.tip().attr("class", "d3-tip").html(function(d) {
+            return  d.Name + " </br> SAT Score :" + d.Score + " </br> Median Income :" +"$"+d.Earn; })
+          .style("font","10px sans-serif");
+    SAT_AVG_ALL.domain([750,1450]);
+    md_earn_wne_p10.domain(d3.extent(dataset,function(d){return d.Earn})).nice();
+
+svg.call(tip);
+
+svg.selectAll("circle")
+   .data(dataset)
+   .enter()
+   .append("circle")
+  .attr("cx", function(d) {
+        return SAT_AVG_ALL(d.Score);
+   })
+   .attr("cy", function(d) {
+        return md_earn_wne_p10(d.Earn);
+   })
+   .attr("r", function(d){return d.Score/150;})
+   .on("mouseover", tip.show)
+   .on("mouseout", tip.hide)
+   ;
+
+    svg.append("g")
+          .attr("class", "y axis")
+          .call(d3.svg.axis()
+          .scale(md_earn_wne_p10)
+          .orient("left"))
+          .append("text")
+          .attr("y", 6)
+          .attr("dy", "10")
+          .attr("transform", "rotate(-90)")
+          .style("text-anchor", "end")
+          .text("Median Salary")
+    svg.append("g")
+          .attr("class", "x axis")
+          .call(d3.svg.axis()
+          .scale(SAT_AVG_ALL)  
+            .orient("bottom"))
+      .attr("transform", "translate(0," + height + ")")
+          .append("text")
+          .attr("x", width)
+          .attr("y", -4)
+          .style("text-anchor", "end")
+          .text("Average SAT Score");
+
+      svg.append("text")
+      .attr("x", width / 2 )
+      .attr("y", -25)
+      .style("font","18px sans-serif")
+      .style("text-anchor", "middle")
+      .text("Q7: Admission Average SAT Score and Median Income of University in Georgia");
+});
+
+</script>
+    </body>
+</html>

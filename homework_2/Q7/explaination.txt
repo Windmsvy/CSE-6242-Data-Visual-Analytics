@@ -1,0 +1,1 @@
+In Q7, I want to visualize the relationship between admission average SAT score and income for universities in GA. Using scatter plot to present it and once you move mouse onto those point, you can get the information of this university. Colleges with missing data are neglected.

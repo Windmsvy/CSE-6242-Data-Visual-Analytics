@@ -1,0 +1,6 @@
+explaination
+
+1) In Daily test, usually time near 10:00 and 17:00 experience higher gluclose level and in mid-night the lowest.
+2) In day of week test, weekend days show extreme higher level gluclose than other days.
+
+Reason : That is becaust the injection of food. Once people eating food, the glucose level will increase and the level will decrease for long time no eating process. In weekend, people preferring eating more food than weekdays.
