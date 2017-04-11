@@ -1,0 +1,8 @@
+Iterations = 10
+Final time = 93.4625971317 seconds
+
+Iterations = 20
+Final time = 125.40724206 seconds
+
+Iterations = 30
+Final time = 144.295933008 seconds

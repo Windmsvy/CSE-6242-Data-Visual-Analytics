@@ -1,0 +1,43 @@
+1. In this case, if it's quality equals to 0, I set it to a and 1 to b.
+
+1) Random forest (customer set)
+weka.classifiers.trees.RandomTree -K 0 -M 1.0 -V 0.001 -S 1 -do-not-check-capabilities
+Time taken to build model: 2.29 seconds
+overall accuracy 0.8765
+
+=== Confusion Matrix ===
+
+    a    b   <-- classified as
+ 3009  135 |    a = a
+  361  495 |    b = b
+
+  2) RandomTree -K 0 -M 1.0 -V 0.001 -S 1
+  Time taken to build model: 0.04 seconds
+  overall accuracy 0.827
+
+  === Confusion Matrix ===
+
+    a    b   <-- classified as
+ 2784  360 |    a = a
+  332  524 |    b = b
+
+  3) BayesNet
+  weka.classifiers.bayes.BayesNet -D -Q weka.classifiers.bayes.net.search.local.K2 -- -P 1 -S 
+  BAYES -E weka.classifiers.bayes.net.estimate.SimpleEstimator -- -A 0.5
+
+  Time taken to build model: 0.15 seconds
+  overall accuracy 0.76625
+
+  === Confusion Matrix ===
+
+    a    b   <-- classified as
+ 2542  602 |    a = a
+  333  523 |    b = b
+
+2. The result of Weka is 87.65% compared to my result 83.55% which is approximately 4% higher than my accuracy rate. 
+I think the reason may be that weka it utilizes C4.5 which involves information gain ratio as a standard to split the tree which improves the performance. Moreover, weka performs a different pruning method and stop criteria will increase the running speed and perferrence.
+
+3. Among these three methods, Random forest method needs most time and with highest ac rate, RandomTree needs least running time and BayesNet method performs worst. I choose randomtree because it is partial of random forest and I wonder know its performance if only one tree exists. Its algorithm is the same as randomforest and with the limitation of number of trees, classify performance is worse than random forest but save lots of time. But it is not very stable sometimes.
+
+BayesNet method is not random method, it bases on the calculation of proprability following Bayesian rules. With the limiation of calculation(number of variables), it cannot justify wine very well becasue the so many variables may interfer each other. Calculation on those variables needs some time but consume less time than randomforest algorithm.
+

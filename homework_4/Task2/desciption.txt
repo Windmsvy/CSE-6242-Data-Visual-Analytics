@@ -1,0 +1,9 @@
+1. Implementation 
+
+1) Use one tree. Justify features one by one, split on average of the occupied feature and compute the information entropy difference to ensure the efficiency. Do it until no more gain or features available. 
+2) Using randint to generate all possilble dataset and use OOB to calculate the relative error (if records occur at all datasets, find existed value to label)
+
+
+2. accuracy of OOB is close to 0.8355
+
+
